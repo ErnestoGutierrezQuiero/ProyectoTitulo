@@ -1,0 +1,56 @@
+#VRML_SIM R2023b utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/floors/protos/RectangleArena.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/living_room_furniture/protos/Sofa.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/robots/adept/pioneer2/protos/Pioneer2.proto"
+
+WorldInfo {
+}
+Viewpoint {
+  orientation 0.10327055898594754 0.16348028783488092 -0.9811265907802899 0.5993431660439793
+  position 3.964105705553929 1.522944233991232 0.3762541024480558
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+}
+RectangleArena {
+  translation 3 3 0
+  floorSize 6 6
+  floorTileSize 2 2
+  wallHeight 3.8
+}
+DEF Pioneer Pioneer2 {
+  hidden position_0_0 8.105600000000148
+  hidden position_0_1 14.95999999999987
+  hidden rotation_2 0.5162473801024824 -0.5162475582835772 0.6833572280319918 4.340530388794299
+  hidden rotation_3 0.049843293864033585 -0.04984353525961717 -0.9975125402969162 1.5732869777628993
+  translation 5.39436 0.66453 0
+  rotation 0 0 1 1.568325064128993
+  controller "epioner"
+  supervisor TRUE
+  extensionSlot [
+    GPS {
+    }
+  ]
+}
+DEF target Robot {
+  translation 0.78 0.41 0
+}
+Sofa {
+  translation 3.54 3.95 0
+}
+Sofa {
+  translation 1.44 3.99 0
+  name "sofa(1)"
+}
+Sofa {
+  translation 2.46 2 0
+  name "sofa(2)"
+}
+Sofa {
+  translation 2.5 5.93 0
+  name "sofa(3)"
+}
