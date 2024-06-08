@@ -4,26 +4,6 @@ import numpy as np
 import pickle
 import matplotlib.pyplot as plt
 
-class QLearningAgent:
-    def __init__(self, num_states, num_actions, alpha=0.2, gamma=0.9, epsilon=0.9):
-        self.num_states = num_states
-        self.num_actions = num_actions
-        self.alpha = alpha  # Tasa de aprendizaje
-        self.gamma = gamma  # Factor de descuento
-        self.epsilon = epsilon  # Probabilidad de exploración
-        self.Q = np.zeros((num_states[0], num_states[1], num_actions))  # Inicializa la tabla Q
-
-    def seleccionar_accion(self, estado):
-        if np.random.rand() < self.epsilon:
-            return np.random.randint(self.num_actions)  # Exploración
-        else:
-            return np.argmax(self.Q[estado[0], estado[1], :])  # Explotación
-
-    def actualizar_Q(self, estado, accion, recompensa, siguiente_estado):
-        mejor_siguiente_accion = np.argmax(self.Q[siguiente_estado[0], siguiente_estado[1], :])
-        td_target = recompensa + self.gamma * self.Q[siguiente_estado[0], siguiente_estado[1], mejor_siguiente_accion]
-        td_error = td_target - self.Q[estado[0], estado[1], accion]
-        self.Q[estado[0], estado[1], accion] += self.alpha * td_error
 
 class MiRobotSupervisor:
     def __init__(self):
@@ -79,7 +59,6 @@ class MiRobotSupervisor:
         x = pos[0]
         y = pos[1]
         self.target_state = self.discretizar(x, y) 
-        self.agent = QLearningAgent((self.num_boxes_x, self.num_boxes_y), 7)
 
     def discretizar(self, x, y):
         # Convertir coordenadas continuas a índices discretos
@@ -134,7 +113,7 @@ class MiRobotSupervisor:
             self.motor_izq.setVelocity(6)  
             self.motor_der.setVelocity(6)  
             self.robot.step(tiempo)  
-        self.detener(1000)
+        self.detener(500)
         
         
     def retroceder(self, tiempo):
@@ -144,7 +123,7 @@ class MiRobotSupervisor:
             self.motor_izq.setVelocity(-6)
             self.motor_der.setVelocity(-6)
             self.robot.step(tiempo)
-        self.detener(1000)
+        self.detener(500)
         
     def girar_izquierda(self,tiempo):
         self.motor_izq.setPosition(float('inf'))
@@ -152,7 +131,7 @@ class MiRobotSupervisor:
         self.motor_izq.setVelocity(-1.7)
         self.motor_der.setVelocity(1.7)
         self.robot.step(tiempo)
-        self.detener(1000)
+        self.detener(500)
         if self.puede_moverse_adelante():
         # Avanzar si es posible
             self.avanzar(2000)
@@ -164,7 +143,7 @@ class MiRobotSupervisor:
         self.motor_izq.setVelocity(1.7)
         self.motor_der.setVelocity(-1.7)
         self.robot.step(tiempo)
-        self.detener(999)
+        self.detener(500)
         if self.puede_moverse_adelante():
         # Avanzar si es posible
             self.avanzar(2000)
@@ -176,7 +155,7 @@ class MiRobotSupervisor:
         self.motor_izq.setVelocity(1.7)
         self.motor_der.setVelocity(-1.7)
         self.robot.step(tiempo)
-        self.detener(1000)  # Detener después de girar
+        self.detener(500)  # Detener después de girar
 
         # Retroceder
         if self.puede_moverse_detras():
@@ -189,7 +168,7 @@ class MiRobotSupervisor:
         self.motor_izq.setVelocity(-1.7)
         self.motor_der.setVelocity(1.7)
         self.robot.step(tiempo)
-        self.detener(1000)  # Detener después de girar
+        self.detener(500)  # Detener después de girar
 
         # Retroceder
         if self.puede_moverse_detras():
@@ -223,16 +202,16 @@ class MiRobotSupervisor:
         if cambio_distancia > 0:
             reward += 50  # Recompensa por acercarse
         else:
-            reward -= 15  # Penalización por alejarse            
+            reward -= 10  # Penalización por alejarse            
         # Penalización por colisiones
         if not self.puede_moverse_adelante() or not self.puede_moverse_detras():
-            reward -= 5 # Penalización por colisiones        
+            reward -= 1 # Penalización por colisiones        
         # Penalización por no moverse
         if self.estado == self.estadoAnterior:
             reward -= 1  # Penalización por no moverse        
         # Recompensa significativa por alcanzar el objetivo
         if estado_actual == target_state:
-            reward += 1500  # Recompensa por alcanzar el objetivo    
+            reward += 200  # Recompensa por alcanzar el objetivo    
         return reward
 
     
@@ -256,6 +235,7 @@ class MiRobotSupervisor:
         robot_state = self.state()
         target_state = self.target_state # Obtener el estado discretizado del target
         if robot_state == target_state: # Verificar si el robot ha alcanzado el target
+            print("done True")
             return True  
         else:
             return False
@@ -329,62 +309,47 @@ class MiRobotSupervisor:
                 self.estado = siguiente_estado
                 recompensa_total += recompensa
                 contador += 1
-                if contador >= 100:
+                if contador >= 50:
                     fin = True
-                    recompensa_total -= 50  # Penalización por episodios largos
+                    recompensa_total -= 20  # Penalización por episodios largos
             recompensas.append(recompensa_total)  # Guardar la recompensa total del episodio
             print(f'Fin del episodio {episodio}, recompensa total: {recompensa_total}')
+            print(self.epsilon)
             if self.epsilon > 0.1:
-                self.epsilon -= 0.02
+                self.epsilon -= 0.002
                 self.epsilon = max(0.1, self.epsilon)
+        # Guardar las recompensas en un archivo
+        with open('recompensas.pkl', 'wb') as f:
+            pickle.dump(recompensas, f)
+
+        print("Recompensas guardadas en 'recompensas.pkl'.")
         return recompensas
     
     def dentro_de_limites(self, x, y):
         return self.x_min <= x <= self.x_max and self.y_min <= y <= self.y_max
     
-    def entrenarQL(self, episodios):
-        recompensas = []
-        for episodio in range(episodios):
-            print(f"Episodio {episodio}")
-
-            # Restablecer la simulación
-            self.reset()
-
-            # Estado inicial
-            self.estado = self.state()
-            self.estadoAnterior = (0, 0)
-            recompensa_total = 0
-            fin = False
-            contador = 0
-
-            while not fin:
-                # Elegir acción basada en el estado actual
-                accion = self.agent.seleccionar_accion(self.estado)
-                # Realizar el paso y obtener el siguiente estado y recompensa
-                siguiente_estado, recompensa, fin = self.step(accion)
-                # Actualizar la matriz `Q` usando Q-learning
-                self.agent.actualizar_Q(self.estado, accion, recompensa, siguiente_estado)
-                # Actualizar el estado actual y la acción
-                self.estado = siguiente_estado
-                recompensa_total += recompensa
-                contador += 1
-                if contador >= 100:
-                    fin = True
-                    recompensa_total -= 200  # Penalización por episodios largos
-            recompensas.append(recompensa_total)  # Guardar la recompensa total del episodio
-            print(f'Fin del episodio {episodio}, recompensa total: {recompensa_total}')
-            if self.agent.epsilon > 0.1:
-                self.agent.epsilon -= 0.02
-                self.agent.epsilon = max(0.1, self.agent.epsilon)
-        return recompensas
+    
 
             
 rob = MiRobotSupervisor()
-rewards = rob.entrenar(50)
+rewards = rob.entrenar(100)
 print(rewards)
-# Save the Q-table to a pickle file
+#Guardar Q_table en formato para MTIRL
+q_table_data = []
+
+for i in range(rob.num_boxes_x):
+    for j in range(rob.num_boxes_y):
+        state = [i, j]
+        actions_dict = {}
+        for k in range(6):  # 6 acciones posibles
+            actions_dict[k] = rob.Q[i, j, k]
+        q_table_data.append((state, actions_dict))
+
+# Save the Q-table data to a pickle file
 with open('q_table.pkl', 'wb') as f:
-    pickle.dump(rob.Q, f)
+    pickle.dump(q_table_data, f)
+
+print("Q-table has been saved to 'q_table.pkl'.")
 
 # Create a table of best actions for every state
 best_actions = np.zeros((rob.num_boxes_x, rob.num_boxes_y), dtype=int)
@@ -403,7 +368,3 @@ plt.xlabel('Episodio')
 plt.ylabel('Recompensa Total')
 plt.show()
 
-plt.plot(r)
-plt.xlabel('Episodio')
-plt.ylabel('Recompensa Total')
-plt.show()

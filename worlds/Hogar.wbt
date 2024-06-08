@@ -40,12 +40,12 @@ Armchair {
   rotation 0 0 1 -1.5707953071795862
 }
 Cabinet {
-  hidden position_6_0 0.00015151407152791448
-  hidden translation_7 -3.0151300118693426e-05 -2.28417365577549e-09 0
-  hidden rotation_7 0 0 1 0.0001515140720660756
-  hidden position_10_0 -0.0001309868712856048
-  hidden translation_11 -2.2156429214601492e-05 1.4511022383700833e-09 0
-  hidden rotation_11 0 0 -1 0.00013098687228749447
+  hidden position_6_0 0.00015631816406498373
+  hidden translation_7 -3.1107314522245195e-05 -2.4313197566350198e-09 0
+  hidden rotation_7 0 0 1 0.00015631816403668004
+  hidden position_10_0 -0.00013507107278260585
+  hidden translation_11 -2.2847271891705903e-05 1.5430043631692314e-09 0
+  hidden rotation_11 0 0 -1 0.0001350710724264754
   translation 2.5 6 0
   rotation 0 0 1 -1.5707953071795862
 }
@@ -103,7 +103,7 @@ Solid {
     }
     HingeJoint {
       jointParameters HingeJointParameters {
-        position 1.929353965659333e-22
+        position 1.9533661812661228e-22
         axis 0 1 0
         anchor 0.2 0 0.19
         minStop -0.0001
@@ -242,10 +242,10 @@ Solid {
   }
 }
 Fridge {
-  hidden position_0_0 -0.00636166714249892
-  hidden position_0_1 0.006360696070432399
-  hidden rotation_1 0 0 -1 0.006361667142493154
-  hidden rotation_2 0 0 1 0.006360696070445731
+  hidden position_0_0 -0.0063946252689231695
+  hidden position_0_1 0.0063936541998187435
+  hidden rotation_1 0 0 -1 0.006394625268925977
+  hidden rotation_2 0 0 1 0.00639365419978506
   translation 0.39 5.62 0
   rotation 0 0 1 -1.5707953071795862
 }
@@ -368,8 +368,8 @@ DEF Pioneer Robot {
         }
       ]
       endPoint Solid {
-        translation 0 -0.16030000000000055 0.0825
-        rotation -0.00511876274494169 0.005118516199655022 -0.9999737991866959 1.5708226093652446
+        translation 0 -0.1603000000000006 0.0825
+        rotation -0.005118762744941653 0.005118516199654946 -0.9999737991866959 1.570822609365244
         children [
           USE WHEEL
         ]
